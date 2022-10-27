@@ -39,17 +39,17 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
 
     const kvPair = new KeyValuePair(key, value);
     const bucketIdx = this.hashMod(key);
-    
+
     let curr = this.data[bucketIdx]; // note: this could be null at first
     while (curr && curr.key !== key) {
       curr = curr.next; // move down the linked list in the bucket
     }
-    
+
     if (curr) {
       // this means that we found the key as we were traversing the bucket's LL
       curr.value = value;
       // don't increment count here, because we aren't ADDING a new pair.
-      
+
     } else {
       if (!this.data[bucketIdx]) {
         // if there was never anything in the bucket, just put the KVP in the bucket
@@ -60,7 +60,7 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
         kvPair.next = this.data[bucketIdx];
         this.data[bucketIdx] = kvPair;
       }
-      
+
       // increment the count of the hashmap if you actually added the new kvPair
       this.count++;
     }
@@ -134,28 +134,37 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
           }
           i++;
         }
-        
+
   }
 
 
   delete(key) {
     let index = this.hashMod(key);
     let curr = this.data[index];
-
+    if (curr === null) return "Key not found";
     if(curr.key === key){
       this.data[index] = curr.next
       this.count--
       return
     }
-   
+
     while(curr.next && curr.next.key !== key ){
       curr = curr.next
     }
 
-    if(curr.next){
+    if (!curr.next){
+      return "Key not found";
+    }else{
       curr.next = curr.next.next;
-      this.count--
+      this.count--;
     }
+
+    // if(curr.next){
+    //   curr.next = curr.next.next;
+    //   this.count--
+    // }else{
+    //   return "Key not found";
+    // }
    }
 }
 
