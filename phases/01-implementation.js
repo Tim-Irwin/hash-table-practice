@@ -139,12 +139,23 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
 
 
   delete(key) {
-  //   let index = this.hashMod(key);
-  //   let curr = this.data[index];
+    let index = this.hashMod(key);
+    let curr = this.data[index];
 
-  //   while(curr.next){
+    if(curr.key === key){
+      this.data[index] = curr.next
+      this.count--
+      return
+    }
+   
+    while(curr.next && curr.next.key !== key ){
+      curr = curr.next
+    }
 
-  //   }
+    if(curr.next){
+      curr.next = curr.next.next;
+      this.count--
+    }
    }
 }
 
