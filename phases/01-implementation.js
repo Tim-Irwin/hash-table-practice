@@ -32,27 +32,60 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
 
 
   insert(key, value) {
-    let index = this.hashMod(key);
 
-    if(this.data[index]){
-      let current = this.data[index]
-      while(current){
-        if(current.key === key){
-          current.value = value;
-          return;
-        }
-        current = current.next;
-        }
-        const pair = new KeyValuePair(key, value);
+    if((this.count/this.capacity) > 0.7){
+      this.resize()
+    }
 
-        pair.next = this.data[index];
-        this.data[index] = pair;
-        this.count++;
+    const kvPair = new KeyValuePair(key, value);
+    const bucketIdx = this.hashMod(key);
+    
+    let curr = this.data[bucketIdx]; // note: this could be null at first
+    while (curr && curr.key !== key) {
+      curr = curr.next; // move down the linked list in the bucket
+    }
+    
+    if (curr) {
+      // this means that we found the key as we were traversing the bucket's LL
+      curr.value = value;
+      // don't increment count here, because we aren't ADDING a new pair.
+      
+    } else {
+      if (!this.data[bucketIdx]) {
+        // if there was never anything in the bucket, just put the KVP in the bucket
+        this.data[bucketIdx] = kvPair;
       } else {
-        const newPair = new KeyValuePair(key, value);
-        this.data[index] = newPair;
-        this.count++;
+        // if there was stuff in the bucket but we didn't find the key...
+        // add this kvPair to the head of the LL in the bucket
+        kvPair.next = this.data[bucketIdx];
+        this.data[bucketIdx] = kvPair;
       }
+      
+      // increment the count of the hashmap if you actually added the new kvPair
+      this.count++;
+    }
+
+    // let index = this.hashMod(key);
+
+    // if(this.data[index]){
+    //   let current = this.data[index]
+    //   while(current){
+    //     if(current.key === key){
+    //       current.value = value;
+    //       return;
+    //     }
+    //     current = current.next;
+    //     }
+    //     const pair = new KeyValuePair(key, value);
+
+    //     pair.next = this.data[index];
+    //     this.data[index] = pair;
+    //     this.count++;
+    //   } else {
+    //     const newPair = new KeyValuePair(key, value);
+    //     this.data[index] = newPair;
+    //     this.count++;
+    //   }
   }
 
   read(key) {
@@ -80,9 +113,9 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
       this.capacity = this.capacity * 2;
 
       // re-instantiate data to an array with its new size filled with null
-      let newData = new Array(this.capacity).fill(null);
+      this.data = new Array(this.capacity).fill(null);
       // reset count (calling insert will re-increment count)
-
+      this.count = 0;
 
     // iterate over old data
       // iterate over each element in old data, looking for nested nodes
@@ -92,21 +125,27 @@ class HashTable { // get O(1), set O(1), deleteKey O(1)
           let curr = oldData[i];
           // console.log(curr);
           while(curr){
-            let newcurr = curr.next;
-            curr.next = null;
-            let newindex = this.hashMod(curr.key);
-            newData[newindex] = curr;
-            curr = newcurr;
+            this.insert(curr.key, curr.value);
+            // let newcurr = curr.next;
+            // curr.next = null;
+            // let newindex = this.hashMod(curr.key);
+            // newData[newindex] = curr;
+            curr = curr.next;
           }
           i++;
         }
-        this.data = newData;
+        
   }
 
 
   delete(key) {
-    // Your code here
-  }
+  //   let index = this.hashMod(key);
+  //   let curr = this.data[index];
+
+  //   while(curr.next){
+
+  //   }
+   }
 }
 
 // let hashTable = new HashTable(2);
