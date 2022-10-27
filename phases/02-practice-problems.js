@@ -36,7 +36,16 @@ function anagrams(str1, str2) {
 
 
 function commonElements(arr1, arr2) {
-  // Your code here
+  const res = [];
+
+  arr1.forEach(num1 => {
+    arr2.forEach(num2 => {
+    if(num1 = num2){
+      res.push(num1);
+      }    
+    })
+  })
+  return res;
 }
 
 
